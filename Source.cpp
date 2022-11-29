@@ -1,108 +1,97 @@
 #include<iostream>
 using namespace std;
-class StackType {
-	int MaxStackSize;
-	int StackTop;
-	int* list;
+struct Node {
+	int info;
+	Node* link;
+};
+class LinkedStack {
+	Node* StackTop;
 public:
-	StackType(int stacksize = 100);
-	void initializestack();
+	LinkedStack();
 	bool isEmptyStack();
-	bool isFullStack();
+	void initializeStack();
 	int top();
 	void push(const int& newItem);
 	void pop();
-	void CopyStack(StackType& otherstack);
-	StackType& operator=(StackType& otherstack);
-	StackType(StackType& otherstack);
-	~StackType();
+	void CopyStack(const LinkedStack& otherstack)
+
 };
+LinkedStack::LinkedStack() {
+	StackTop = NULL;
+}
 
-StackType::StackType(int stacksize) {
-	if (stacksize <= 0) {
-		cout << "error" << endl;
-		MaxStackSize = 100;
+bool LinkedStack::isEmptyStack() {
+	return (StackTop = NULL);
+}
+
+void LinkedStack::initializeStack() {
+	Node* temp;
+	while (StackTop != NULL) {
+		temp = StackTop;
+		StackTop = StackTop->link;
+		delete temp;
 	}
-	else MaxStackSize = stacksize;
-	StackTop = 0;
-	list = new int[MaxStackSize];
 }
 
-void StackType::initializestack() {
-	StackTop = 0;
+int LinkedStack::top() {
+	assert(StackTop != NULL);
+	return StackTop->info;
 }
 
-bool StackType::isEmptyStack() {
-	return (StackTop == 0);
-}
-
-bool StackType::isFullStack() {
-	return (StackTop == MaxStackSize);
-}
-
-int StackType::top() {
-	return list[StackTop - 1];
-}
-
-void StackType::push(const int& newItem) {
-	if (!isFullStack()) {
-		list[StackTop] = newItem;
-		StackTop++;
-	}
-	else cout << "error" << endl;
-}
-
-void StackType::pop() {
+void LinkedStack::push(const int& newItem) {
+	Node* newnode = new Node;
+	newnode->info = newItem;
 	if (!isEmptyStack()) {
-		StackTop--;
+		newnode->link = StackTop;
+		StackTop = newnode;
 	}
-	else cout << "error" << endl;
-}
-
-void StackType::CopyStack(StackType& otherstack) {
-	delete[]list;
-	MaxStackSize = otherstack.MaxStackSize;
-	StackTop = otherstack.StackTop;
-	list = new int[MaxStackSize];
-	for (int i = 0; i < StackTop; i++)
-		list[i] = otherstack.list[i];
-}
-
-StackType& StackType::operator=(StackType& otherstack) {
-	if (this != &otherstack) {
-		CopyStack(otherstack);
+	else {
+		StackTop = newnode;
+		newnode->link = NULL;
 	}
-	return *this;
 }
 
-StackType::StackType(StackType& otherstack) {
-	list = NULL;
-	CopyStack(otherstack);
+void LinkedStack::pop() {
+	if (isEmptyStack()) {
+		cout << "error" << endl;
+	}
+	else {
+		Node* temp = StackTop;
+		StackTop = StackTop->link;
+		delete temp;
+	}
 }
+void LinkedStack::CopyStack(const LinkedStack& otherstack) {
+	Node* current, *last, *newnode;
+	if (StackTop != NULL)
+		initializeStack();
+	if (otherstack.StackTop == NULL)
+		StackTop = NULL;
+	else {
+		current = otherstack.StackTop;
+		StackTop = new Node;
+		StackTop->info = current->info;
+		StackTop->link = NULL;
+		last = StackTop;
+		current = current->link;
+		while (current != NULL) {
+			newnode = new Node;
+			newnode->info = current->info;
+			newnode->link = NULL;
+			last = newnode;
+			current = current->link;
+		}
 
-StackType::~StackType() {
-	delete[]list;
+	}
+
+
 }
-
 int main() {
-	
-	StackType obj;
-	obj.push(9);
-	obj.push(10);
-	obj.push(4);
-	obj.push(8);
-	obj.pop();
-	obj.push(obj.top() + 2);
-	obj.push(3);
-	StackType tempobj;
-	while (!obj.isEmptyStack()) {
-		tempobj.push(obj.top());
-		obj.pop();
-	}
-	while (!tempobj.isEmptyStack()) {
-		cout << tempobj.top() << " ";
-		tempobj.pop();
-	}
+
+
+
+
+
 
 
 
